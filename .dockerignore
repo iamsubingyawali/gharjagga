@@ -1,0 +1,8 @@
+# Dockerignore file for Laravel
+vendor
+node_modules
+.env
+*.log
+*.sql
+.vscode
+.idea

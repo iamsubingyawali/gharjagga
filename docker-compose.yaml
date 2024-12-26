@@ -1,0 +1,48 @@
+# Docker compose file to run
+# 1. Postgres
+# 2. Laravel
+
+services:
+  postgres:
+    image: postgres:17.1
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: laravel
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+        - app-net
+  laravel:
+    image: iamsubingyawali/mdsd:latest
+    container_name: laravel
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "80:8000"
+    volumes:
+      - ./appstore:/var/www/storage/app
+      - ./logs:/var/www/storage/logs
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: laravel
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    restart: unless-stopped
+    networks:
+        - app-net
+
+networks:
+  app-net:
+    driver: bridge
