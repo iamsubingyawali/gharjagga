@@ -9,6 +9,12 @@ use App\Http\Middleware\Landlord;
 use Illuminate\Support\Facades\Route;
 
 // PUBLIC ROUTES
+// Health
+Route::get('health', function () {
+    return response()->json([
+        'message' => 'API is up and running.',
+    ]);
+});
 // User
 Route::controller(UserController::class)->group(function () {
     Route::post('login', 'login')->middleware('throttle:4,1');
