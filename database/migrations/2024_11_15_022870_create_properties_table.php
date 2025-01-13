@@ -17,12 +17,12 @@ return new class extends Migration
             $table->text('description');
             $table->string('address');
             $table->string('rent');
-            $table->string('image');
-            $table->string('area');
-            $table->string('no_of_bedrooms');
-            $table->string('no_of_bathrooms');
-            $table->foreignId('created_by')->constrained('users', 'id')->nullOnDelete();
-            $table->foreignId('type_id')->constrained('property_types', 'id')->nullOnDelete();
+            $table->string('image')->nullable();
+            $table->string('area')->nullable();
+            $table->string('no_of_bedrooms')->nullable();
+            $table->string('no_of_bathrooms')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users', 'id')->nullOnDelete();
+            $table->foreignId('type_id')->nullable()->constrained('property_types', 'id')->nullOnDelete();
             $table->timestamps();
         });
     }

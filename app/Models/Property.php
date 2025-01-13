@@ -34,6 +34,8 @@ class Property extends Model
         'no_of_bathrooms' => 'integer',
         'rent' => 'float',
         'area' => 'float',
+        'created_by' => 'integer',
+        'type_id' => 'integer'
     ];
 
     /**
