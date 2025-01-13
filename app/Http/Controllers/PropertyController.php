@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PropertyController extends Controller
 {
@@ -30,7 +32,7 @@ class PropertyController extends Controller
      */
     public function show($id)
     {
-        $property = Property::with('landlord', 'propertyType')->find($id);
+        $property = Property::with('landlord', 'propertyType')->findOrFail($id);
 
         return response()->json([
             'message' => "Property retrieved successfully.",
@@ -66,15 +68,17 @@ class PropertyController extends Controller
         // Populate created_by with the authenticated user's id and create the property
         $request['created_by'] = $request->user()->id;
 
+        // Remove the image from the request data
+        $data = $request->except('image');
+
         // Upload image if it exists
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = $request->title . time() . '.' . $image->extension();
-            $image->move(public_path('property_images'), $imageName);
+            $imageName = Str::uuid() . time() . '.' . $image->extension();
+            $image->storeAs('property_images', $imageName, 'public');
+            $data['image'] = $imageName;
         }
-
-        $request['image'] = $imageName;
-        $property = Property::create($request->all());
+        $property = Property::create($data);
 
         return response()->json([
             'message' => "Property created successfully.",
@@ -117,20 +121,22 @@ class PropertyController extends Controller
             ], 403);
         }
 
+        // Remove the image from the request data
+        $data = $request->except('image');
+
         // Upload image if it exists
         if ($request->hasFile('image')) {
             // Delete the old image
             if ($property->image) {
-                unlink(public_path('property_images/' . $property->image));
+                Storage::disk('public')->delete('property_images/' . $property->image);
             }
             $image = $request->file('image');
-            $imageName = $request->title . time() . '.' . $image->extension();
-            $image->move(public_path('property_images'), $imageName);
+            $imageName = Str::uuid() . time() . '.' . $image->extension();
+            $image->storeAs('property_images', $imageName, 'public');
+            $data['image'] = $imageName;
         }
 
-        // Update the property
-        $request['image'] = $imageName;
-        $property->update($request->all());
+        $property->update($data);
 
         return response()->json([
             'message' => "Property updated successfully.",
@@ -153,6 +159,11 @@ class PropertyController extends Controller
             return response()->json([
                 'message' => "You are not authorized to delete this property.",
             ], 403);
+        }
+
+        // Delete the image
+        if ($property->image) {
+            Storage::disk('public')->delete('property_images/' . $property->image);
         }
 
         // Delete the property
