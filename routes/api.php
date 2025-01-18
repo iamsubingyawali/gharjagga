@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // User
     Route::controller(UserController::class)->group(function () {
         Route::post('logout', 'logout');
+        Route::get('verify', 'verify');
     });
     // Property
     Route::controller(PropertyController::class)->group(function () {

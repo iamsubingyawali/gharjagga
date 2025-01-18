@@ -38,6 +38,20 @@ class UserController extends Controller
     }
 
     /**
+     * Verify the user's bearer token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verify()
+    {
+        $user = User::with('role')->findOrFail(auth()->id());
+        return response()->json([
+            'message' => 'User token verified successfully.',
+            'user' => $user,
+        ]);
+    }
+
+    /**
      * Log the user out.
      *
      * @param  \Illuminate\Http\Request  $request
