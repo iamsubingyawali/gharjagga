@@ -16,7 +16,7 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $properties = Property::with('landlord', 'propertyType')->get();
+        $properties = Property::with('landlord', 'propertyType')->orderBy('created_at', 'desc')->get();
 
         return response()->json([
             'message' => "Properties retrieved successfully.",
