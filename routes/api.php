@@ -18,7 +18,7 @@ Route::get('health', function () {
 // User
 Route::controller(UserController::class)->group(function () {
     Route::post('login', 'login')->middleware('throttle:4,1');
-    Route::post('register', 'store')->middleware('throttle:2,1');
+    Route::post('register', 'store')->middleware('throttle:4,1');
 });
 // User Role
 Route::controller(UserRoleController::class)->group(function () {
@@ -59,6 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::controller(UserController::class)->group(function () {
             Route::post('user', 'store');
             Route::get('user', 'index');
+            Route::get('user/role/{role_id}', 'indexByRole');
             Route::get('user/{id}', 'show');
             Route::delete('user/{id}', 'delete');
         });

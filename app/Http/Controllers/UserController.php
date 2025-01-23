@@ -82,6 +82,22 @@ class UserController extends Controller
     }
 
     /**
+     * Get all users with a specific role.
+     *
+     * @param  int  $role_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function indexByRole($role_id)
+    {
+        $users = User::with('role')->where('role_id', $role_id)->get();
+
+        return response()->json([
+            'message' => 'Users retrieved successfully.',
+            'users' => $users,
+        ]);
+    }
+
+    /**
      * Get a user.
      *
      * @param  int  $id
