@@ -139,6 +139,13 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // If not admin, ensure user is allowed to update their own record only
+        if (auth()->user()->role_id != 1 && $id != auth()->id()) {
+            return response()->json([
+                'message' => 'You are not authorized to update this user.',
+            ], 403);
+        }
+
         $request->validate([
             'name' => 'string',
             'email' => 'email|unique:users,email,' . $id,

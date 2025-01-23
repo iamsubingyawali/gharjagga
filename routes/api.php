@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(UserController::class)->group(function () {
         Route::post('logout', 'logout');
         Route::get('verify', 'verify');
+        Route::put('user/{id}', 'update');
     });
     // Property
     Route::controller(PropertyController::class)->group(function () {
@@ -59,7 +60,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('user', 'store');
             Route::get('user', 'index');
             Route::get('user/{id}', 'show');
-            Route::put('user/{id}', 'update');
             Route::delete('user/{id}', 'delete');
         });
     });
